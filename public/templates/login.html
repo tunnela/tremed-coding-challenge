@@ -1,0 +1,91 @@
+<main class="content login">
+  <form ref="form" class="login-box">
+    <h1>Sign in</h1>
+
+    <div class="login-inputs">
+      <input ref="email" type="email" class="input" placeholder="Email">
+      <input ref="password" type="password" class="input" placeholder="Password">
+    </div>
+
+    <button class="button">Login</button>
+  </form>
+</main>
+<script>
+export default {
+  async $setup() {
+    document.body.classList.remove('mod-loading');
+
+    this.$.form.$submit(this.onSubmit.bind(this));
+
+    this.$.email.input(() => { 
+      this.$.password.classList.remove('mod-error'); 
+      this.$.email.classList.remove('mod-error'); 
+    });
+
+    this.$.password.input(() => { 
+      this.$.password.classList.remove('mod-error'); 
+      this.$.email.classList.remove('mod-error'); 
+    });
+  },
+
+  onSubmit(e) {
+    document.body.classList.add('mod-loading');
+
+    e.preventDefault(); 
+
+    this.login();
+  },
+
+  async state() {
+    const response = await fetch('/api/auth', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    });
+
+    const json = await response.json();
+
+    return json.state;
+  },
+
+  async login() {
+    const state = await this.state();
+    const response = await fetch('/api/auth/token', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 
+        state: state,
+        email: this.$.email.value,
+        password: this.$.password.value 
+      })
+    });
+
+    let error, json;
+
+    try {
+      json = await response.json();
+
+      error = json.error || false;
+    } catch (e) {
+      error = e.message;
+    }
+    document.body.classList.remove('mod-loading');
+
+    if (error) {
+      this.$.email.classList.add('mod-error');
+      this.$.password.classList.add('mod-error');
+
+      return;
+    }
+    this.setItem('user', json);
+    this.to('/');
+
+    document.body.classList.add('mod-user');
+  }
+};
+</script>

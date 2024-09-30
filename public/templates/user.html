@@ -1,0 +1,34 @@
+<div class="user">
+  <div ref="id"></div>
+  <div ref="first_name"></div>
+  <div ref="last_name"></div>
+  <div ref="email"></div>
+  <div ref="phone"></div>
+  <div class="user-buttons">
+    <button ref="editUser" type="button" class="button mod-small">Edit</button>
+    <button ref="deleteUser" type="button" class="button mod-small">Delete</button>
+  </div>
+</div>
+<script>
+export default {
+  async $setup() {
+    this.$.id.innerHTML = this.$props.user.id;
+    this.$.email.innerHTML = this.$props.user.email;
+    this.$.first_name.innerHTML = this.$props.user.first_name || '--';
+    this.$.last_name.innerHTML = this.$props.user.last_name || '--';
+    this.$.phone.innerHTML = this.$props.user.phone || '--';
+
+    if (this.$props.isSelf) {
+      this.$.deleteUser.disabled = '';
+      this.$.deleteUser.style.display = 'none';
+    }
+    this.$.editUser.$click(
+      () => this.$props.parent.openUserPopup(this.$props.user)
+    );
+
+    this.$.deleteUser.$click(
+      () => this.$props.parent.deleteUser(this.$props.user.id)
+    );
+  }
+};
+</script>

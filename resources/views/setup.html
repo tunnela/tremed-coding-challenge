@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+  <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, 
+  minimum-scale=1, width=device-width, height=device-height, viewport-fit=cover, shrink-to-fit=no">
+  <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+  <div id="loading"></div>
+  <div id="app"></div>
+
+  <template id="setup">
+    <div class="content setup">
+      <form ref="form" class="setup-box">
+        <h1>Installation</h1>
+
+        <p>Please provide email and password for super admin account and then press "Install" to get the app up and running.</p>
+
+        <input ref="email" type="email" class="input" placeholder="Email">
+        <input ref="password" type="password" class="input" placeholder="Password">
+
+        <button class="button mod-down">Install</button>
+      </form>
+    </div>
+    <script>
+      export default {
+        async $setup() {
+          this.$.form.$submit(this.onSubmit.bind(this));
+        },
+
+        async onSubmit(e) {
+          document.body.classList.add('mod-loading');
+
+          e.preventDefault(); 
+
+          const response = await fetch('/api/setup', {
+            method: 'POST',
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+              email: this.$.email.value,
+              password: this.$.password.value 
+            })
+          });
+
+          const json = await response.json();
+
+          this.setItem('user', json);
+
+          setTimeout(() => location.href = '/', 500);
+        }
+      };
+    </script>
+  </template>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

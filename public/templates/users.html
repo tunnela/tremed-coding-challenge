@@ -1,0 +1,234 @@
+<div class="content users">
+  <h1>Users</h1>
+
+  <template id="user" src="/templates/user.html"></template>
+
+  <div class="users-list" ref="users"></div>
+
+  <button ref="addUser" class="button">New user</button>
+
+  <div ref="popup" class="popup">
+    <form ref="form" class="popup-box">
+      <h1 ref="popupHeading"></h1>
+
+      <div class="login-inputs">
+        <input ref="id" type="hidden" class="input">
+        <input ref="first_name" type="text" class="input" placeholder="First name">
+        <input ref="last_name" type="text" class="input" placeholder="Last name">
+        <input ref="email" type="email" class="input" placeholder="Email">
+        <input ref="phone" type="text" class="input" placeholder="Phone">
+        <input ref="password" type="password" class="input" placeholder="Password">
+      </div>
+
+      <button ref="popupButton" class="button"></button>
+    </form>
+  </div>
+</div>
+<script>
+  const fields = ['first_name', 'last_name', 'email', 'phone', 'password'];
+  const requiredFields = ['first_name', 'last_name', 'email', 'password'];
+  let users = [];
+
+  export default {
+    async $setup() {
+      this.$.form.$click((e) => e.stopPropagation());
+      this.$.addUser.$click(() => this.openUserPopup());
+      this.$.popup.$click(() => this.closeUserPopup());
+
+      this.$.form.$submit(this.onSubmit.bind(this));
+
+      for (const field of fields) {
+        this.$[field].input(() => { 
+          this.$[field].classList.remove('mod-error'); 
+        });
+      }
+      this.loadUsers();
+    },
+
+    async renderUsers() {
+      this.$.users.innerHTML = '';
+
+      for (const user of users) {
+        await this.render('user', this.$.users, {
+          user: user,
+          parent: this,
+          isSelf: user.id == 1 || this.getItem('user')?.id == user.id
+        }, false);
+      }
+    },
+
+    async loadUsers() {
+      const response = await this.fetch('/api/users');
+
+      users = await response.json();
+
+      this.renderUsers();
+    },
+
+    onSubmit(e) {
+      document.body.classList.add('mod-loading');
+
+      e.preventDefault(); 
+
+      if (this.$.id.value) {
+        this.updateUser();
+      } else {
+        this.addUser();
+      }
+    },
+
+    closeUserPopup() {
+      this.$.id.value = '';
+
+      for (const field of fields) {
+        this.$[field].value = '';
+        this.$[field].classList.remove('mod-error');
+      }
+      this.$.popup.classList.remove('mod-visible');
+    },
+
+    openUserPopup(props) {
+      if (props) {
+        this.$.id.value = props.id || '';
+
+        for (const field of fields) {
+          this.$[field].value = props[field] || '';
+        }
+      }
+      this.$.popupHeading.innerHTML = props ? 'Edit user' : 'New user';
+      this.$.popupButton.innerHTML = props ? 'Update' : 'Add';
+
+      this.$.popup.classList.add('mod-visible');
+    },
+
+    async deleteUser(id) {
+      if (id == 1 || id == this.getItem('user').id) {
+        return;
+      }
+      document.body.classList.add('mod-loading');
+
+      const response = await this.fetch('/api/users/' + id, {
+        method: 'DELETE'
+      });
+
+      document.body.classList.remove('mod-loading');
+
+      if (response.status != 204) {
+        return;
+      }
+      this.loadUsers();
+    },
+
+    async updateUser() {
+      let error = false;
+      let requiredFieldsWithoutPass = requiredFields.slice(0);
+
+      requiredFieldsWithoutPass.pop();
+
+      for (const field of requiredFieldsWithoutPass) {
+        if (this.$[field].value) {
+          continue;
+        }
+        this.$[field].classList.add('mod-error');
+
+        error = true;
+      }
+      if (error) {
+        document.body.classList.remove('mod-loading');
+
+        return;
+      }
+      const response = await this.fetch('/api/users/' + this.$.id.value, {
+        method: 'PUT',
+        body: JSON.stringify({ 
+          first_name: this.$.first_name.value,
+          last_name: this.$.last_name.value,
+          email: this.$.email.value,
+          phone: this.$.phone.value,
+          password: this.$.password.value,
+        })
+      });
+
+      let json;
+
+      try {
+        json = await response.json();
+
+        error = json.error || false;
+      } catch (e) {
+        error = e.message;
+      }
+      document.body.classList.remove('mod-loading');
+
+      if (error) {
+        for (const field of fields) {
+          if (!error.includes(field)) {
+            continue;
+          }
+          this.$[field].classList.add('mod-error');
+        }
+        return;
+      }
+      this.$.id.value = '';
+
+      for (const field of fields) {
+        this.$[field].value = '';
+      }
+      this.closeUserPopup();
+
+      this.loadUsers();
+    },
+
+    async addUser() {
+      let error = false;
+
+      for (const field of requiredFields) {
+        if (this.$[field].value) {
+          continue;
+        }
+        this.$[field].classList.add('mod-error');
+
+        error = true;
+      }
+      if (error) {
+        document.body.classList.remove('mod-loading');
+
+        return;
+      }
+      const response = await this.fetch('/api/users', {
+        method: 'POST',
+        body: JSON.stringify({ 
+          first_name: this.$.first_name.value,
+          last_name: this.$.last_name.value,
+          email: this.$.email.value,
+          phone: this.$.phone.value,
+          password: this.$.password.value,
+        })
+      });
+
+      let json;
+
+      try {
+        json = await response.json();
+
+        error = json.error || false;
+      } catch (e) {
+        error = e.message;
+      }
+      document.body.classList.remove('mod-loading');
+
+      if (error) {
+        for (const field of fields) {
+          if (!error.includes(field)) {
+            continue;
+          }
+          this.$[field].classList.add('mod-error');
+        }
+        return;
+      }
+      this.closeUserPopup();
+
+      this.loadUsers();
+    }
+  };
+</script>

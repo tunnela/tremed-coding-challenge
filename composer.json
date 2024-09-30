@@ -1,0 +1,30 @@
+{
+    "name": "tunnela/tremed-coding-challenge",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "Tunnela\\TremedCodingChallenge\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Lauri Tunnela",
+            "email": "lauri@tunne.la"
+        }
+    ],
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.64"
+    },
+    "scripts": {
+        "format": "vendor/bin/php-cs-fixer fix src",
+        "serve": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php -S localhost:8000 -t public"
+        ]
+    },
+    "require": {
+        "masterminds/html5": "^2.9",
+        "phpmailer/phpmailer": "^6.9"
+    }
+}

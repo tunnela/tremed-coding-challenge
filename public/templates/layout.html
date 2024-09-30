@@ -1,0 +1,25 @@
+<div id="layout">
+  <a ref="link" class="logout">Log out</a>
+
+  <slot></slot>
+</div>
+<script>
+export default {
+  async $setup() {
+    this.$.link.$click(this.logout.bind(this));
+  },
+
+  logout(e) {
+    document.body.classList.add('mod-loading');
+
+    e.preventDefault();
+
+    this.fetch('/api/auth/token', {
+      method: 'DELETE'
+    });
+
+    this.removeItem('user');
+    this.to('/login');
+  }
+};
+</script>
