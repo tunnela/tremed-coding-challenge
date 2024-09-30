@@ -6,6 +6,17 @@ class SetupController
 {
     public function __invoke($app, $database, $data) 
     {
+        $errors = [];
+
+        foreach (['email', 'password'] as $field) {
+            if (!empty($data->{$field})) {
+                continue;
+            }
+            $errors[] = 'Value for field `' . $field . '` is missing.';
+        }
+        if ($errors) {
+            return $app->json(['error' => implode(' ', $errors)], 422);
+        }
         try {
             $database->beginTransaction();
 

@@ -13,11 +13,11 @@
 
       <div class="login-inputs">
         <input ref="id" type="hidden" class="input">
-        <input ref="first_name" type="text" class="input" placeholder="First name">
-        <input ref="last_name" type="text" class="input" placeholder="Last name">
-        <input ref="email" type="email" class="input" placeholder="Email">
+        <input ref="first_name" type="text" class="input" placeholder="First name" required>
+        <input ref="last_name" type="text" class="input" placeholder="Last name" required>
+        <input ref="email" type="email" class="input" placeholder="Email" required>
         <input ref="phone" type="text" class="input" placeholder="Phone">
-        <input ref="password" type="password" class="input" placeholder="Password">
+        <input ref="password" type="password" class="input" minlength="15" placeholder="Password">
       </div>
 
       <button ref="popupButton" class="button"></button>

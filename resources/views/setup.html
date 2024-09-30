@@ -19,8 +19,8 @@
 
         <p>Please provide email and password for super admin account and then press "Install" to get the app up and running.</p>
 
-        <input ref="email" type="email" class="input" placeholder="Email">
-        <input ref="password" type="password" class="input" placeholder="Password">
+        <input ref="email" type="email" class="input" placeholder="Email" required>
+        <input ref="password" type="password" class="input" minlength="15" placeholder="Password" required>
 
         <button class="button mod-down">Install</button>
       </form>
@@ -29,6 +29,16 @@
       export default {
         async $setup() {
           this.$.form.$submit(this.onSubmit.bind(this));
+
+          this.$.email.input(() => { 
+            this.$.password.classList.remove('mod-error'); 
+            this.$.email.classList.remove('mod-error'); 
+          });
+
+          this.$.password.input(() => { 
+            this.$.password.classList.remove('mod-error'); 
+            this.$.email.classList.remove('mod-error'); 
+          });
         },
 
         async onSubmit(e) {
@@ -36,6 +46,23 @@
 
           e.preventDefault(); 
 
+          let error = false;
+
+          if (!this.$.email.value) {
+            this.$.email.classList.add('mod-error');
+
+            error = true;
+          }
+          if (!this.$.password.value) {
+            this.$.password.classList.add('mod-error');
+
+            error = true;
+          }
+          if (error) {
+            document.body.classList.remove('mod-loading');
+
+            return;
+          }
           const response = await fetch('/api/setup', {
             method: 'POST',
             headers: {
@@ -48,11 +75,29 @@
             })
           });
 
-          const json = await response.json();
+          let json;
 
+          try {
+            json = await response.json();
+
+            error = json.error || false;
+          } catch (e) {
+            error = e.message;
+          }
+          if (error) {
+            document.body.classList.remove('mod-loading');
+
+            if (error.includes('email')) {
+              this.$.email.classList.add('mod-error');
+            }
+            if (error.includes('password')) {
+              this.$.password.classList.add('mod-error');
+            }
+            return;
+          }
           this.setItem('user', json);
 
-          setTimeout(() => location.href = '/', 500);
+          location.href = '/';
         }
       };
     </script>
