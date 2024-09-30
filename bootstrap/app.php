@@ -6,6 +6,9 @@ require $rootPath . '/vendor/autoload.php';
 
 date_default_timezone_set('UTC');
 
+if (!file_exists($rootPath . '/.env')) {
+    throw new \Exception('Remember to add .env file!');
+}
 $env = parse_ini_file($rootPath . '/.env');
 
 foreach ($env as $key => $value) {
