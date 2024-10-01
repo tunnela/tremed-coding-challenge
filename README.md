@@ -2,6 +2,10 @@
 
 A simple app demoing user auth and management
 
+### Demo
+
+[https://tremed-coding-challenge.tunne.la/](https://tremed-coding-challenge.tunne.la/)
+
 ### Requirements
 
 - PHP 8+ (`php-sqlite3` package for fast testing)
