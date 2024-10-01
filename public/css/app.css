@@ -5,6 +5,7 @@
   --background-color-rgb: 21, 25, 33;
   --light-color: #fff;
   --error-color: #d93f3f;
+  --border-color: #e0e0e0;
 }
 
 * {
@@ -62,6 +63,7 @@ a {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 20rem;
 }
 
 .login-box, .setup-box {
@@ -75,6 +77,11 @@ a {
   align-items: space-between;
   color: var(--text-color);
   position: relative;
+  max-width: 100%;
+}
+
+.users {
+  height: auto;
 }
 
 .mod-loading .login-box *,
@@ -178,13 +185,12 @@ a {
 
 .users {
   justify-content: flex-start;
-  padding: 30rem;
 }
 
 .users-list {
   display: table;
   width: 100%;
-  max-width: 900rem;
+  max-width: 1100rem;
   background: var(--light-color);
   color: var(--text-color);
 }
@@ -198,9 +204,94 @@ a {
   padding: 10rem;
 }
 
-.user-buttons {
+.user-min {
   width: 1px;
   white-space: nowrap;
+}
+
+.user-exact {
+  width: 18%;
+}
+
+.user label {
+  display: none;
+  hyphens: auto;
+  word-break: break-all;
+}
+
+.user span {
+  hyphens: auto;
+  word-break: break-all;
+}
+
+.user-buttons {
+  text-align: right;
+}
+
+.user-buttons-inner > .button {
+  margin-left: 10rem;
+}
+
+.user-buttons-inner {
+  display: flex;
+  white-space: nowrap;
+  justify-content: flex-end;
+}
+
+.user-hidden-cell {
+  display: none;
+}
+
+@media (max-width: calc(900 / 16 * 1em)) {
+  body {
+    font-size: 14rem;
+  }
+
+  .users-list {
+    display: block;
+    max-width: 500rem;
+    background: transparent;
+  }
+
+  .user {
+    display: table;
+    width: 100%;
+    margin: 10rem 0;
+    background: var(--light-color);
+  }
+
+  .user > * {
+    display: table-row;
+    width: 100%;
+  }
+
+  .user label {
+    display: table-cell;
+    padding: 10rem;
+    width: 1px;
+    white-space: nowrap;
+    font-weight: 600;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .user > *:first-child > * {
+    margin-top: 0;
+  }
+
+  .user span {
+    display: table-cell;
+    padding: 10rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .user-buttons > * {
+    display: table-cell;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .user-buttons-inner {
+    padding: 10rem;
+  }
 }
 
 .popup {

@@ -1,12 +1,30 @@
 <div class="user">
-  <div ref="id"></div>
-  <div ref="first_name"></div>
-  <div ref="last_name"></div>
-  <div ref="email"></div>
-  <div ref="phone"></div>
-  <div class="user-buttons">
-    <button ref="editUser" type="button" class="button mod-small">Edit</button>
-    <button ref="deleteUser" type="button" class="button mod-small">Delete</button>
+  <div class="user-min">
+    <label>ID:</label>
+    <span ref="id"></span>
+  </div>
+  <div class="user-exact">
+    <label>First name:</label>
+    <span ref="first_name"></span>
+  </div>
+  <div class="user-exact">
+    <label>Last name:</label>
+    <span ref="last_name"></span>
+  </div>
+  <div>
+    <label>Email:</label>
+    <span ref="email"></span>
+  </div>
+  <div class="user-exact">
+    <label>Phone:</label>
+    <span ref="phone"></span>
+  </div>
+  <div class="user-min user-buttons">
+    <div class="user-hidden-cell"></div>
+    <div class="user-buttons-inner">
+      <button ref="editUser" type="button" class="button mod-small">Edit</button>
+      <button ref="deleteUser" type="button" class="button mod-small">Delete</button>
+    </div>
   </div>
 </div>
 <script>
